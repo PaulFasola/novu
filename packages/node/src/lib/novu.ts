@@ -16,8 +16,17 @@ export class Novu extends EventEmitter implements INovu {
     super();
     this.apiKey = apiKey;
 
+    if (process.env.NOVU_BACKEND_URL && !config?.backendUrl) {
+      config = {
+        ...config,
+        backendUrl: process.env.NOVU_BACKEND_URL,
+      };
+    }
+
+    const baseURL = this.buildBackendUrl(config);
+
     this.http = axios.create({
-      baseURL: this.buildBackendUrl(config),
+      baseURL,
       headers: {
         Authorization: `ApiKey ${this.apiKey}`,
       },
